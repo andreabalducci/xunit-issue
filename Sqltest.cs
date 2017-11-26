@@ -9,16 +9,18 @@ namespace xunit_issue
         [Fact]
         public void should_connect()
         {
-            object result;
-            using (var connection = new SqlConnection())
-            {
-                using(var cmd = new SqlCommand("SELECT 1"))
-                {
-                    result = cmd.ExecuteNonQuery();
-                }
-            }
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+             {
+                 using (var connection = new SqlConnection())
+                 {
+                     using (var cmd = new SqlCommand("SELECT 1"))
+                     {
+                         cmd.ExecuteNonQuery();
+                     }
+                 }
+             });
 
-            Assert.NotNull(result);
+             Assert.True(ex.Message.StartsWith("ExecuteNonQuery: Connection property"));
         }
     }
 }
